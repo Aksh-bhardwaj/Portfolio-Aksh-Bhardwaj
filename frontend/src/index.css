@@ -1,0 +1,90 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --neon-green: #39ff14;
+  --neon-cyan: #00f3ff;
+  --neon-pink: #ff00ff;
+  --neon-dark: #0a0b0d;
+}
+
+body {
+  margin: 0;
+  background-color: var(--neon-dark);
+  color: white;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  overflow-x: hidden;
+}
+
+.neon-text-green {
+  color: var(--neon-green);
+  text-shadow: 0 0 5px var(--neon-green), 0 0 10px var(--neon-green);
+}
+
+.neon-text-cyan {
+  color: var(--neon-cyan);
+  text-shadow: 0 0 5px var(--neon-cyan), 0 0 10px var(--neon-cyan);
+}
+
+.neon-border-green {
+  border: 1px solid var(--neon-green);
+  box-shadow: 0 0 5px var(--neon-green);
+}
+
+.glass {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.neon-button-green {
+  border: 1px solid var(--neon-green);
+  color: var(--neon-green);
+  transition: all 0.3s ease;
+}
+
+.neon-button-green:hover {
+  background: var(--neon-green);
+  color: black;
+  box-shadow: 0 0 20px var(--neon-green);
+}
+
+/* Premium glass cards — gradient border + inner glow */
+.experience-card-frame {
+  border-radius: 1.5rem;
+  padding: 1px;
+  background: linear-gradient(
+    135deg,
+    rgba(57, 255, 20, 0.65),
+    rgba(0, 243, 255, 0.55),
+    rgba(168, 85, 247, 0.6),
+    rgba(255, 0, 255, 0.55)
+  );
+  box-shadow:
+    0 0 20px rgba(0, 243, 255, 0.12),
+    0 0 40px rgba(168, 85, 247, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.experience-card-inner {
+  border-radius: calc(1.5rem - 1px);
+  background: linear-gradient(
+    165deg,
+    rgba(18, 18, 22, 0.92) 0%,
+    rgba(8, 9, 12, 0.96) 100%
+  );
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+.experience-sparkle {
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse 80% 50% at 50% 100%,
+    rgba(168, 85, 247, 0.15) 0%,
+    rgba(0, 243, 255, 0.08) 40%,
+    transparent 70%
+  );
+}
