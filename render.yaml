@@ -7,8 +7,9 @@ services:
     name: portfolio-backend
     runtime: python
     rootDir: backend
-    buildCommand: pip install -r requirements-render.txt && python manage.py migrate
-    startCommand: gunicorn portfolio_backend.wsgi:application --bind 0.0.0.0:$PORT
+    # No migrate during build — DB often unreachable in build env; migrate runs at start.
+    buildCommand: pip install -r requirements-render.txt
+    startCommand: python manage.py migrate --noinput && gunicorn portfolio_backend.wsgi:application --bind 0.0.0.0:$PORT
     envVars:
       - key: PYTHON_VERSION
         value: "3.12.3"
