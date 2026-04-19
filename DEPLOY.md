@@ -25,6 +25,7 @@ repo/
 ### Checklist (order matters)
 
 1. **Root directory = `backend` (Source settings).** If this is wrong, Docker / `requirements.txt` / `manage.py` are not in the build context.
+   - On Windows, save **`requirements*.txt` as UTF-8** (Cursor/VS Code: bottom status bar → encoding). **Do not use “UTF-16”** — `pip` then fails with `\x00` between letters.
 2. **This repo uses a `backend/Dockerfile` + `railway.json` with `"builder": "DOCKERFILE"`.** The image is `python:3.11-slim`; `pip install -r requirements.txt` runs **inside** that image, so **`python` always exists** — this fixes endless `pip: not found` / `python: not found` from Railpack ordering.
 3. **After pushing:** Railway → **Settings → Build** → ensure **Custom Build Command is empty** (Docker doesn’t need it). **Settings → Deploy** → you can clear **Custom Start Command** so the container uses the **Dockerfile `CMD`** (migrate → `ensure_superuser` → gunicorn); if you leave a start command, it must not reference a missing `python` before the image exists.
 4. **Variables:** remove **`RAILPACK_INSTALL_CMD`** if you added it earlier — it only affects Railpack and can break installs.

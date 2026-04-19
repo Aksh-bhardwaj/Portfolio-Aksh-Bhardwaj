@@ -8,10 +8,10 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 
 WORKDIR /app
 
-# Both files: requirements.txt includes "-r requirements-render.txt"
-COPY requirements.txt requirements-render.txt ./
+# Install from requirements-render.txt only (UTF-8; avoids Windows UTF-16 issues on requirements.txt)
+COPY requirements-render.txt ./
 RUN pip install --no-cache-dir --upgrade pip && \
-    pip install --no-cache-dir -r requirements.txt
+    pip install --no-cache-dir -r requirements-render.txt
 
 COPY . .
 
