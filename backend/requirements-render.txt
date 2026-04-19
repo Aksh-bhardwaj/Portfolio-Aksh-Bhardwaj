@@ -1,4 +1,4 @@
-# Minimal deps for Render — portfolio API only (not full local requirements.txt)
+# Minimal prod API deps (Railway / etc.; filename kept for compatibility — not Render-only)
 Django==5.1.1
 djangorestframework==3.16.1
 django-cors-headers==4.9.0

@@ -1,5 +1,5 @@
-# Render Blueprint — https://render.com/docs/blueprint-spec
-# Dashboard: New → Blueprint → Connect repo (optional; you can also create services manually)
+# Optional Render Blueprint — NOT used by Railway (deploy API on Railway per DEPLOY.md).
+# https://render.com/docs/blueprint-spec
 
 services:
   # Django API
