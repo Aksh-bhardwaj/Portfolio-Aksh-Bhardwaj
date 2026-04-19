@@ -18,6 +18,7 @@ repo/
     requirements-render.txt     # lean prod deps (name is historical; not Render-only)
     runtime.txt                 # e.g. python-3.11.9 (tells Railpack: use Python)
     Procfile                    # start: migrate + gunicorn (see below)
+    railway.json                # optional: clears mistaken “build = pip install” (see checklist)
 ```
 
 ### Checklist (order matters)
@@ -28,8 +29,9 @@ repo/
 4. **`backend/Procfile`** — this repo uses:
    `migrate` → `ensure_superuser` → `gunicorn` (for DB + blog admin). A **gunicorn-only** Procfile is not enough for first-time DB setup.
 5. **Build / install (fix for `pip: not found` — logs show `sh -c pip install ...`):**
+   - **Do not put `pip install` in “Custom Build Command”.** That field is for real builds (e.g. `npm run build`). Dependencies are installed in Railpack’s **install** step from `requirements.txt`. Putting `python -m pip install ...` only in Build skips/warps the normal Python setup and can repeat errors.
    - Railway **Settings → Build** must **not** use bare `pip` or `pip3`. Those binaries are often missing in the build container.
-   - **Best:** clear **Install command** (and any custom install line) so Railpack uses its default from `requirements.txt`.
+   - **Best:** clear **Custom Build Command** and any separate **Install command** so Railpack uses its default from `requirements.txt`. This repo’s `backend/railway.json` sets `buildCommand` to `null` so config-as-code overrides a bad dashboard value after you push.
    - **If something still forces the wrong command**, add a **Railway variable** on the **same** service (available during build):
      **`RAILPACK_INSTALL_CMD`** = `python -m pip install -r requirements.txt`  
      (Railpack’s real name is `RAILPACK_INSTALL_CMD`, not `INSTALL_COMMAND`.)
