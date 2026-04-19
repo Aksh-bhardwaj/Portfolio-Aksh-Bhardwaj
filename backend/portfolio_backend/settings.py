@@ -16,22 +16,36 @@ from dotenv import load_dotenv
 import os
 import socket
 
+from django.core.exceptions import ImproperlyConfigured
+
 load_dotenv()
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
+def _truthy_env(name: str, default: str = 'False') -> bool:
+    return os.environ.get(name, default).strip().lower() in ('1', 'true', 'yes', 'on')
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-default')
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get('DEBUG', 'True') == 'True'
+DEBUG = _truthy_env('DEBUG', 'True')
 
-ALLOWED_HOSTS = ['*']
+_secret = os.environ.get('SECRET_KEY', '').strip()
+if _secret:
+    SECRET_KEY = _secret
+elif DEBUG:
+    SECRET_KEY = 'django-insecure-dev-only-do-not-use-in-production'
+else:
+    raise ImproperlyConfigured('Set SECRET_KEY in the environment when DEBUG=False.')
+
+_hosts_raw = os.environ.get('ALLOWED_HOSTS', '').strip()
+if _hosts_raw:
+    ALLOWED_HOSTS = [h.strip() for h in _hosts_raw.split(',') if h.strip()]
+elif DEBUG:
+    ALLOWED_HOSTS = ['localhost', '127.0.0.1', '[::1]']
+else:
+    raise ImproperlyConfigured(
+        'Set ALLOWED_HOSTS to a comma-separated list (e.g. your-api.up.railway.app) when DEBUG=False.'
+    )
 
 
 # Application definition
@@ -114,6 +128,10 @@ def _prefer_ipv4_for_postgres():
 
 
 _prefer_ipv4_for_postgres()
+
+_db_engine = DATABASES.get('default', {}).get('ENGINE', '')
+if not DEBUG and 'sqlite' in _db_engine:
+    raise ImproperlyConfigured('Set DATABASE_URL to PostgreSQL (or another production DB); SQLite is not allowed when DEBUG=False.')
 
 
 # Password validation

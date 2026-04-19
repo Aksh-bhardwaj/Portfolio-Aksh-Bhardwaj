@@ -1,22 +1,39 @@
-# Frontend
-frontend/node_modules/
-frontend/dist/
-frontend/.env
-frontend/.env.*
+# Secrets — never commit (templates are tracked with ! exceptions below)
+.env
+.env.*
+!.env.example
+**/.env
+**/.env.*
+!**/.env.example
 
-# Backend
-backend/venv/
-backend/.venv/
-backend/__pycache__/
-backend/**/__pycache__/
-backend/*.pyc
-backend/.env
-backend/.env.*
-backend/db.sqlite3
+# Python
+__pycache__/
+**/__pycache__/
+*.py[cod]
+*$py.class
+.Python
+venv/
+.venv/
+**/venv/
+**/.venv/
 
-# OS / editor
+# Node / frontend build
+node_modules/
+**/node_modules/
+dist/
+**/dist/
+dist-ssr/
+*.local
+
+# Django / DB (local SQLite)
+*.sqlite3
+**/*.sqlite3
+db.sqlite3
+
+# Logs & OS
+*.log
 .DS_Store
 Thumbs.db
 .idea/
 .vscode/
-*.log
+!**/.vscode/extensions.json
