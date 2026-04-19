@@ -28,14 +28,11 @@ repo/
 3. **Railway → Settings → Root directory = `backend`.** If this is wrong or empty, the build may not use Python or the right folder.
 4. **`backend/Procfile`** — this repo uses:
    `migrate` → `ensure_superuser` → `gunicorn` (for DB + blog admin). A **gunicorn-only** Procfile is not enough for first-time DB setup.
-5. **Build / install (fix for `pip: not found` — logs show `sh -c pip install ...`):**
-   - **Do not put `pip install` in “Custom Build Command”.** That field is for real builds (e.g. `npm run build`). Dependencies are installed in Railpack’s **install** step from `requirements.txt`. Putting `python -m pip install ...` only in Build skips/warps the normal Python setup and can repeat errors.
-   - Railway **Settings → Build** must **not** use bare `pip` or `pip3`. Those binaries are often missing in the build container.
-   - **Best:** clear **Custom Build Command** and any separate **Install command** so Railpack uses its default from `requirements.txt`. This repo’s `backend/railway.json` sets `buildCommand` to `null` so config-as-code overrides a bad dashboard value after you push.
-   - **If something still forces the wrong command**, add a **Railway variable** on the **same** service (available during build):
-     **`RAILPACK_INSTALL_CMD`** = `python -m pip install -r requirements.txt`  
-     (Railpack’s real name is `RAILPACK_INSTALL_CMD`, not `INSTALL_COMMAND`.)
-   - **Manual install override** (only if you type it yourself): `python -m pip install -r requirements.txt` — never `pip install -r requirements-render.txt` alone.
+5. **Build / install — keep Railpack defaults (fixes `pip: not found` and `python: not found`):**
+   - **Custom Build Command:** leave **empty**. Do not put `pip install` or `python -m pip install` there — that phase runs **before** Python is reliably on `PATH`, so logs can show `python: not found`.
+   - **Railway Variables:** **do not set `RAILPACK_INSTALL_CMD`.** Railpack documents that it **overwrites install commands from providers** — including the steps that install Python. If you set it to `python -m pip install ...`, the image may never install Python first, and the build fails with `sh: python: not found`.
+   - **Custom Install Command** (if Railway shows it): leave empty. Default install uses `requirements.txt` after Python is provisioned from `runtime.txt`.
+   - **Best practice:** root directory = `backend`, then rely on **`runtime.txt`** + **`requirements.txt`** only. Push **`backend/railway.json`** so `buildCommand` stays cleared (`null`) and your start command is fixed in git.
 6. **Redeploy** after a `git push` or use **Redeploy** in Railway.
 
 ### First-time service setup
