@@ -14,35 +14,28 @@ Architecture: **Vercel** serves the static **React/Vite** app; **Railway** runs 
 repo/
   backend/
     manage.py
+    Dockerfile                 # Railway build: official Python image (avoids Railpack “python: not found”)
     requirements.txt            # includes: -r requirements-render.txt
     requirements-render.txt     # lean prod deps (name is historical; not Render-only)
-    runtime.txt                 # e.g. python-3.11.9 (tells Railpack: use Python)
-    Procfile                    # start: migrate + gunicorn (see below)
-    railway.json                # optional: clears mistaken “build = pip install” (see checklist)
+    runtime.txt                 # used if you ever switch back to Railpack; optional with Docker
+    Procfile                    # used if you start without Docker; Docker uses CMD in Dockerfile
+    railway.json                # uses DOCKERFILE builder (see below)
 ```
 
 ### Checklist (order matters)
 
-1. **`backend/runtime.txt`** — one line, e.g. `python-3.11.9` (already in this repo).
-2. **`backend/requirements-render.txt`** — name and path must be exact; it is the file `requirements.txt` includes.
-3. **Railway → Settings → Root directory = `backend`.** If this is wrong or empty, the build may not use Python or the right folder.
-4. **`backend/Procfile`** — this repo uses:
-   `migrate` → `ensure_superuser` → `gunicorn` (for DB + blog admin). A **gunicorn-only** Procfile is not enough for first-time DB setup.
-5. **Build / install — keep Railpack defaults (fixes `pip: not found` and `python: not found`):**
-   - **Custom Build Command:** leave **empty**. Do not put `pip install` or `python -m pip install` there — that phase runs **before** Python is reliably on `PATH`, so logs can show `python: not found`.
-   - **Railway Variables:** **do not set `RAILPACK_INSTALL_CMD`.** Railpack documents that it **overwrites install commands from providers** — including the steps that install Python. If you set it to `python -m pip install ...`, the image may never install Python first, and the build fails with `sh: python: not found`.
-   - **Custom Install Command** (if Railway shows it): leave empty. Default install uses `requirements.txt` after Python is provisioned from `runtime.txt`.
-   - **Best practice:** root directory = `backend`, then rely on **`runtime.txt`** + **`requirements.txt`** only. Push **`backend/railway.json`** so `buildCommand` stays cleared (`null`) and your start command is fixed in git.
-6. **Redeploy** after a `git push` or use **Redeploy** in Railway.
+1. **Root directory = `backend` (Source settings).** If this is wrong, Docker / `requirements.txt` / `manage.py` are not in the build context.
+2. **This repo uses a `backend/Dockerfile` + `railway.json` with `"builder": "DOCKERFILE"`.** The image is `python:3.11-slim`; `pip install -r requirements.txt` runs **inside** that image, so **`python` always exists** — this fixes endless `pip: not found` / `python: not found` from Railpack ordering.
+3. **After pushing:** Railway → **Settings → Build** → ensure **Custom Build Command is empty** (Docker doesn’t need it). **Settings → Deploy** → you can clear **Custom Start Command** so the container uses the **Dockerfile `CMD`** (migrate → `ensure_superuser` → gunicorn); if you leave a start command, it must not reference a missing `python` before the image exists.
+4. **Variables:** remove **`RAILPACK_INSTALL_CMD`** if you added it earlier — it only affects Railpack and can break installs.
+5. **`backend/runtime.txt`** / **`Procfile`** — still fine for documentation or non-Docker hosts; Docker does not rely on `runtime.txt`.
+6. **Redeploy** after `git push`.
 
 ### First-time service setup
 
 1. **New** → **GitHub** → select this repo and add a **web** service (root directory `backend` and install behavior as in the checklist above).
 2. Add **PostgreSQL** (or Railway Postgres). Link it so **`DATABASE_URL`** is injected, or paste the URL manually.
-3. **Service start:** leave default so Railway uses **`backend/Procfile`**, or set start command to:
-     ```bash
-     python manage.py migrate --noinput && python manage.py ensure_superuser && gunicorn portfolio_backend.wsgi:application --bind 0.0.0.0:$PORT
-     ```
+3. **Service start:** with **Dockerfile** deploys, the **Dockerfile `CMD`** runs migrate → `ensure_superuser` → gunicorn. Leave **Custom Start Command** empty unless you intentionally override it.
 
 4. Set **environment variables** on the Railway web service:
 
