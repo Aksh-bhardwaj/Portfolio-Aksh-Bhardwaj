@@ -8,8 +8,8 @@ services:
     runtime: python
     rootDir: backend
     # No migrate during build — DB often unreachable in build env; migrate runs at start.
-    buildCommand: pip install -r requirements-render.txt
-    startCommand: python manage.py migrate --noinput && gunicorn portfolio_backend.wsgi:application --bind 0.0.0.0:$PORT
+    buildCommand: python -m pip install -r requirements.txt
+    startCommand: python manage.py migrate --noinput && python manage.py ensure_superuser && gunicorn portfolio_backend.wsgi:application --bind 0.0.0.0:$PORT
     envVars:
       - key: PYTHON_VERSION
         value: "3.12.3"
@@ -17,6 +17,9 @@ services:
         generateValue: true
       - key: DEBUG
         value: "False"
+      # Matches any *.onrender.com host; override if you use a custom domain.
+      - key: ALLOWED_HOSTS
+        value: ".onrender.com"
       - key: WEB_CONCURRENCY
         value: "2"
       - key: DATABASE_URL
