@@ -21,7 +21,18 @@ const About = () => {
         },
     ];
 
-    const tech = ['Django', 'React', 'Python', 'AWS', 'Docker', 'Postman', 'Linux'];
+    const tech = [
+        'React',
+        'Django',
+        'Python',
+        'PostgreSQL',
+        'AWS',
+        'Docker',
+        'Kafka',
+        'Redis',
+        'REST APIs',
+        'ABDM',
+    ];
 
     const container = {
         hidden: { opacity: 0 },
@@ -58,7 +69,8 @@ const About = () => {
                         <span className="text-white">Me</span>
                     </h2>
                     <p className="mt-4 max-w-4xl text-base text-gray-400 sm:text-lg">
-                        Backend, frontend, and security — with a focus on clean APIs and sharp UX.
+                        Full stack engineer building ABDM-enabled health tech — scalable systems, clean APIs, and
+                        real-world impact.
                     </p>
                 </motion.div>
 
@@ -73,22 +85,45 @@ const About = () => {
                     >
                         <motion.div
                             variants={item}
-                            className="min-w-0 space-y-6 text-[0.95rem] leading-relaxed text-gray-300 sm:text-lg lg:col-span-8 xl:col-span-9"
+                            className="min-w-0 space-y-5 text-[0.95rem] leading-relaxed text-gray-300 sm:text-lg lg:col-span-8 xl:col-span-9"
                         >
                             <p>
-                                Computer Science graduate with hands-on experience in{' '}
-                                <span className="font-semibold text-neon-cyan">Python and API testing</span> using Postman,
-                                backed by strong fundamentals in Networking, Operating Systems, and Linux.
+                                <span className="font-semibold text-white">Full Stack Software Engineer</span> with
+                                experience building scalable, secure, and real-world applications, particularly in the{' '}
+                                <span className="font-semibold text-neon-cyan">healthcare and enterprise</span> domain.
+                                Currently developing an{' '}
+                                <span className="font-semibold text-neon-green">ABDM-enabled Electronic Health Record (EHR)</span>{' '}
+                                SaaS platform using a <span className="text-neon-pink font-semibold">multi-tenant</span>{' '}
+                                architecture to support multiple healthcare providers efficiently.
                             </p>
                             <p>
-                                Experienced in backend development using{' '}
-                                <span className="font-semibold text-neon-green">Django</span> and frontend development with{' '}
-                                <span className="font-semibold text-neon-pink">React</span>. Familiar with Docker for
-                                containerization and Kafka for event-driven data streaming.
+                                Proficient in end-to-end systems with{' '}
+                                <span className="font-semibold text-neon-pink">React.js</span> for dynamic UIs and{' '}
+                                <span className="font-semibold text-neon-green">Python (Django)</span> for robust backends.
+                                Experienced in <span className="text-white/90">RESTful APIs</span>, secure authentication, and
+                                relational data with <span className="font-semibold text-neon-cyan">PostgreSQL</span>.
+                            </p>
+                            <p>
+                                Strong experience with <span className="text-white/90">microservices</span>, event-driven
+                                systems using <span className="font-semibold text-neon-cyan">Kafka</span>,{' '}
+                                <span className="font-semibold text-neon-pink">Redis</span> caching, and performance work
+                                including indexing and API tuning. Familiar with{' '}
+                                <span className="text-neon-green font-semibold">ABDM</span> integration — ABHA-based
+                                verification and healthcare data exchange.
+                            </p>
+                            <p>
+                                Cloud and DevOps: <span className="font-semibold text-neon-cyan">AWS</span> (EC2, S3, Lambda),{' '}
+                                <span className="text-white/90">Docker</span>, and CI/CD for reliable deployments. I also
+                                engineered a <span className="text-white/90">billing and payments</span> module with dynamic
+                                QR flows, secure asset storage on S3, and pixel-accurate{' '}
+                                <span className="text-neon-pink">jsPDF / autoTable</span> invoices and receipts, plus
+                                refund workflows with <span className="text-neon-green">RBAC</span>, pagination, and
+                                audit-ready processes.
                             </p>
                             <p className="text-gray-400">
-                                Working knowledge of AWS services including Lambda and S3. Continuously learning modern
-                                technologies and eager to contribute.
+                                Solid CS foundation: DSA, OS, networks, and Linux. API testing with Postman and
+                                system-level debugging. I care about system design, scalability, and performance — always
+                                learning and shipping production-ready code.
                             </p>
                         </motion.div>
 

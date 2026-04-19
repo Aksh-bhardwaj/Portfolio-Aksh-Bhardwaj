@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { X, Calendar, Clock, Share2, ArrowLeft, Bookmark, ThumbsUp, ThumbsDown, MessageSquare, Send, Highlighter } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { X, Calendar, Clock, ArrowLeft, ThumbsUp, ThumbsDown, MessageSquare, Send, Highlighter } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import api from '../utils/api';
@@ -10,41 +10,35 @@ const BlogDetail = ({ post, onClose }) => {
     const [commentData, setCommentData] = useState({ name: '', text: '' });
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [highlightMode, setHighlightMode] = useState(false);
-    const [userVote, setUserVote] = useState(null); // 'like', 'dislike', or null
+    const [userVote, setUserVote] = useState(null);
 
     useEffect(() => {
-        // Check local storage for previous votes
         const votes = JSON.parse(localStorage.getItem('aksh_portfolio_votes') || '{}');
         if (votes[post.slug]) {
             setUserVote(votes[post.slug]);
         }
 
-        // Refresh post data to get comments and counts
         api.get(`blogs/${post.slug}/`)
             .then(res => setCurrentPost(res.data))
             .catch(err => console.error("Error fetching full post:", err));
     }, [post.slug]);
 
     const handleVote = async (type) => {
-        if (userVote === type) return; // Already voted this way
+        if (userVote === type) return;
 
         try {
-            // 1. If switching, undo the previous vote
             if (userVote) {
                 await api.post(`blogs/${currentPost.slug}/undo_${userVote}/`);
             }
 
-            // 2. Perform the new vote
             const res = await api.post(`blogs/${currentPost.slug}/${type}/`);
-            
-            // 3. Update both counts from the response
-            setCurrentPost({ 
-                ...currentPost, 
-                likes: res.data.likes, 
-                dislikes: res.data.dislikes 
+
+            setCurrentPost({
+                ...currentPost,
+                likes: res.data.likes,
+                dislikes: res.data.dislikes,
             });
-            
-            // 4. Save vote locally
+
             const votes = JSON.parse(localStorage.getItem('aksh_portfolio_votes') || '{}');
             votes[currentPost.slug] = type;
             localStorage.setItem('aksh_portfolio_votes', JSON.stringify(votes));
@@ -59,7 +53,6 @@ const BlogDetail = ({ post, onClose }) => {
         setIsSubmitting(true);
         try {
             const res = await api.post(`blogs/${currentPost.slug}/comment/`, commentData);
-            // Prepend new comment to list
             setCurrentPost({ 
                 ...currentPost, 
                 comments: [res.data, ...(currentPost.comments || [])] 
@@ -79,15 +72,13 @@ const BlogDetail = ({ post, onClose }) => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className={`fixed inset-0 z-[100] bg-[#0a0b0d] overflow-y-auto overflow-x-hidden pt-20 ${highlightMode ? 'selection:bg-yellow-400 selection:text-black' : ''}`}
+            className={`fixed inset-0 z-[100] bg-[#090a0d] overflow-y-auto overflow-x-hidden pt-20 ${highlightMode ? 'selection:bg-yellow-400 selection:text-black' : ''}`}
         >
-            {/* Animated background highlights */}
             <div className="fixed top-0 left-0 w-full h-full pointer-events-none z-0">
                 <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-neon-cyan opacity-[0.05] rounded-full blur-[150px]"></div>
                 <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-neon-pink opacity-[0.05] rounded-full blur-[150px]"></div>
             </div>
 
-            {/* Sticky Header Navigation */}
             <nav className="fixed top-0 left-0 w-full z-[110] glass border-b border-white/5 px-6 py-4 flex justify-between items-center backdrop-blur-2xl">
                 <button 
                     onClick={onClose}
@@ -109,43 +100,56 @@ const BlogDetail = ({ post, onClose }) => {
                 </div>
             </nav>
 
-            <div className="container mx-auto px-4 max-w-4xl relative z-10 py-12">
-                <motion.div
-                    initial={{ y: 40, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                >
-                    {/* Meta Info */}
-                    <div className="flex items-center gap-4 text-neon-green font-mono text-sm mb-6">
-                        <Calendar size={16} />
-                        <span>{new Date(currentPost.created_at).toLocaleDateString()}</span>
-                        <span className="w-1 h-1 bg-gray-600 rounded-full"></span>
-                        <Clock size={16} />
-                        <span>5 min read</span>
-                    </div>
-
-                    {/* Title */}
-                    <h1 className="text-5xl md:text-7xl font-extrabold text-white mb-10 tracking-tighter leading-[1.1]">
-                        {currentPost.title}
-                    </h1>
-
-                    {/* Content Section */}
-                    <article className="prose prose-invert prose-lg max-w-none 
-                        prose-headings:text-white prose-headings:font-bold prose-headings:tracking-tight
-                        prose-p:text-gray-300 prose-p:leading-relaxed prose-p:mb-8
-                        prose-strong:text-neon-cyan prose-strong:font-bold
-                        prose-code:text-neon-green prose-code:bg-white/5 prose-code:px-1 prose-code:rounded
-                        prose-pre:bg-black/50 prose-pre:border prose-pre:border-white/5 prose-pre:rounded-2xl
-                        prose-ul:list-disc prose-ul:pl-6 prose-li:text-gray-300
-                    ">
-                        <div className={`markdown-content ${highlightMode ? 'cursor-text' : ''}`}>
-                            <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                                {currentPost.content}
-                            </ReactMarkdown>
+            <div className="container relative z-10 mx-auto max-w-3xl px-5 py-12 sm:px-6 lg:max-w-[52rem]">
+                <motion.div initial={{ y: 40, opacity: 0 }} animate={{ y: 0, opacity: 1 }}>
+                    <header className="mx-auto mb-10 max-w-[65ch]">
+                        <div className="mb-6 flex flex-wrap items-center gap-x-4 gap-y-2 font-mono text-xs uppercase tracking-wider text-gray-500 sm:text-sm">
+                            <span className="inline-flex items-center gap-2 text-emerald-400/90">
+                                <Calendar size={14} aria-hidden />
+                                {new Date(currentPost.created_at).toLocaleDateString(undefined, {
+                                    year: 'numeric',
+                                    month: 'long',
+                                    day: 'numeric',
+                                })}
+                            </span>
+                            <span className="hidden h-1 w-1 rounded-full bg-gray-600 sm:inline" aria-hidden />
+                            <span className="inline-flex items-center gap-2 text-gray-500">
+                                <Clock size={14} aria-hidden />
+                                ~5 min read
+                            </span>
                         </div>
+
+                        <h1 className="text-balance text-3xl font-bold leading-[1.15] tracking-tight text-gray-50 sm:text-4xl lg:text-[2.75rem] lg:leading-[1.12]">
+                            {currentPost.title}
+                        </h1>
+                    </header>
+
+                    <article
+                        className={`markdown-content prose prose-invert prose-lg mx-auto max-w-[65ch]
+                        prose-headings:scroll-mt-28 prose-headings:font-semibold prose-headings:tracking-tight prose-headings:text-gray-50
+                        prose-h2:mt-12 prose-h2:mb-4 prose-h2:border-b prose-h2:border-white/10 prose-h2:pb-2 prose-h2:text-2xl prose-h2:leading-snug
+                        prose-h3:mt-10 prose-h3:mb-3 prose-h3:text-xl prose-h3:text-gray-100 prose-h3:leading-snug
+                        prose-h4:text-lg prose-h4:font-semibold prose-h4:text-gray-200
+                        prose-p:mb-6 prose-p:text-[1.0625rem] prose-p:leading-[1.8] prose-p:text-[#c5ccd6]
+                        prose-strong:font-semibold prose-strong:text-cyan-200
+                        prose-a:text-cyan-400 prose-a:underline-offset-4 hover:prose-a:text-cyan-300
+                        prose-ul:my-6 prose-ul:list-outside prose-ul:pl-5 prose-ul:marker:text-cyan-400/90
+                        prose-ol:my-6 prose-ol:list-outside prose-ol:pl-6 prose-ol:marker:text-cyan-400/80
+                        prose-li:my-2 prose-li:pl-1 prose-li:text-[#c5ccd6] prose-li:leading-relaxed
+                        prose-blockquote:my-8 prose-blockquote:border-l-2 prose-blockquote:border-cyan-500/50 prose-blockquote:bg-white/[0.03] prose-blockquote:py-3 prose-blockquote:pl-5 prose-blockquote:pr-4 prose-blockquote:italic prose-blockquote:text-gray-400
+                        prose-hr:my-12 prose-hr:border-white/[0.12]
+                        prose-code:rounded-md prose-code:border prose-code:border-white/10 prose-code:bg-white/[0.08] prose-code:px-1.5 prose-code:py-0.5 prose-code:text-[0.9em] prose-code:font-normal prose-code:text-emerald-300/95 before:prose-code:content-none after:prose-code:content-none
+                        prose-pre:my-8 prose-pre:overflow-x-auto prose-pre:rounded-xl prose-pre:border prose-pre:border-white/10 prose-pre:bg-[#050608] prose-pre:p-5
+                        prose-table:w-full prose-table:border-collapse prose-table:text-sm prose-table:text-[#c5ccd6]
+                        prose-th:border prose-th:border-white/15 prose-th:bg-white/[0.06] prose-th:px-3 prose-th:py-2 prose-th:text-left prose-th:text-gray-200
+                        prose-td:border prose-td:border-white/10 prose-td:px-3 prose-td:py-2
+                        ${highlightMode ? 'cursor-text' : ''}`}
+                    >
+                        <ReactMarkdown remarkPlugins={[remarkGfm]}>{currentPost.content}</ReactMarkdown>
                     </article>
 
-                    {/* Interactivity Bar Bottom */}
-                    <div className="flex items-center gap-6 my-16 border-y border-white/5 py-6">
+                    <div className="mx-auto my-16 max-w-[65ch] border-y border-white/5 py-6">
+                    <div className="flex flex-wrap items-center gap-4 sm:gap-6">
                         <button 
                             onClick={() => handleVote('like')} 
                             disabled={userVote === 'like'}
@@ -164,21 +168,20 @@ const BlogDetail = ({ post, onClose }) => {
                             <span className="font-bold">{currentPost.dislikes || 0}</span>
                         </button>
 
-                        <div className="flex items-center gap-2 text-gray-400 ml-auto">
+                        <div className="ml-0 flex items-center gap-2 text-gray-400 sm:ml-auto">
                             <span className="p-2 bg-white/5 rounded-lg">
                                 <MessageSquare size={18} />
                             </span>
                             <span className="font-bold">{currentPost.comments?.length || 0} Comments</span>
                         </div>
                     </div>
+                    </div>
 
-                    {/* Comments Section */}
-                    <div className="mt-24 border-t border-white/5 pt-16">
+                    <div className="mx-auto mt-16 max-w-[65ch] border-t border-white/5 pt-14">
                         <h3 className="text-3xl font-bold text-white mb-12 flex items-center gap-4">
                             Comments <span className="text-sm bg-white/10 px-3 py-1 rounded-full text-gray-400">{currentPost.comments?.length || 0}</span>
                         </h3>
 
-                        {/* Comment Form */}
                         <form onSubmit={handleCommentSubmit} className="glass p-8 rounded-3xl border-white/5 mb-16">
                             <div className="grid md:grid-cols-2 gap-6 mb-6">
                                 <div>
@@ -213,7 +216,6 @@ const BlogDetail = ({ post, onClose }) => {
                             </button>
                         </form>
 
-                        {/* Comment List */}
                         <div className="space-y-8">
                             {currentPost.comments?.map((comment) => (
                                 <motion.div 
