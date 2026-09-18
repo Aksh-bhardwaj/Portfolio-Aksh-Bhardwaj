@@ -4,6 +4,7 @@ import { X, Calendar, Clock, ArrowLeft, ThumbsUp, ThumbsDown, MessageSquare, Sen
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import api from '../utils/api';
+import { getLocalPostBySlug } from '../data/blogPosts';
 
 const BlogDetail = ({ post, onClose }) => {
     const [currentPost, setCurrentPost] = useState(post);
@@ -18,9 +19,29 @@ const BlogDetail = ({ post, onClose }) => {
             setUserVote(votes[post.slug]);
         }
 
+        const local = getLocalPostBySlug(post.slug);
+        if (local?.content && !post.content) {
+            setCurrentPost((prev) => ({ ...prev, ...local, ...post, content: local.content }));
+        }
+
         api.get(`blogs/${post.slug}/`)
-            .then(res => setCurrentPost(res.data))
-            .catch(err => console.error("Error fetching full post:", err));
+            .then(res => {
+                const merged = {
+                    ...local,
+                    ...res.data,
+                    // Prefer full local markdown for seeded featured posts
+                    title: local?.title || res.data.title || post.title,
+                    content: local?.content || res.data.content || post.content,
+                    excerpt: res.data.excerpt || local?.excerpt || post.excerpt,
+                };
+                setCurrentPost(merged);
+            })
+            .catch(err => {
+                console.error("Error fetching full post:", err);
+                if (local) {
+                    setCurrentPost((prev) => ({ ...prev, ...local, content: local.content }));
+                }
+            });
     }, [post.slug]);
 
     const handleVote = async (type) => {
@@ -115,7 +136,7 @@ const BlogDetail = ({ post, onClose }) => {
                             <span className="hidden h-1 w-1 rounded-full bg-gray-600 sm:inline" aria-hidden />
                             <span className="inline-flex items-center gap-2 text-gray-500">
                                 <Clock size={14} aria-hidden />
-                                ~5 min read
+                                ~{Math.max(1, Math.ceil((currentPost.content || '').split(/\s+/).length / 200))} min read
                             </span>
                         </div>
 

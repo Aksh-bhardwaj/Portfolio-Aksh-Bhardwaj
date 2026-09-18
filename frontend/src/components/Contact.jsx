@@ -1,169 +1,200 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Send, MessageSquare, Phone, Mail, MapPin } from 'lucide-react';
+import { Send, MessageSquare, Phone, Mail } from 'lucide-react';
 import api from '../utils/api';
+import SectionHeader from './SectionHeader';
+import TiltCard from './TiltCard';
+import { resumeData } from '../data/resume';
 
 const Contact = () => {
-    const [formData, setFormData] = useState({
-        name: '',
-        email: '',
-        message: ''
-    });
-    const [status, setStatus] = useState({ type: '', msg: '' });
-    const [loading, setLoading] = useState(false);
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    message: '',
+  });
+  const [status, setStatus] = useState({ type: '', msg: '' });
+  const [loading, setLoading] = useState(false);
 
-    const handleChange = (e) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
-    };
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        setLoading(true);
-        setStatus({ type: '', msg: '' });
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setStatus({ type: '', msg: '' });
 
-        try {
-            await api.post('contact/', formData);
-            setStatus({ type: 'success', msg: 'Message sent successfully! I will get back to you soon.' });
-            setFormData({ name: '', email: '', message: '' });
-        } catch (err) {
-            console.error(err);
-            setStatus({ type: 'error', msg: 'Failed to send message via email, but you can still use WhatsApp below!' });
-        } finally {
-            setLoading(false);
-        }
-    };
+    try {
+      await api.post('contact/', formData);
+      setStatus({
+        type: 'success',
+        msg: 'Message sent successfully! I will get back to you soon.',
+      });
+      setFormData({ name: '', email: '', message: '' });
+    } catch (err) {
+      console.error(err);
+      setStatus({
+        type: 'error',
+        msg: 'Failed to send message via email, but you can still use WhatsApp below!',
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    const handleWhatsApp = () => {
-        const text = `Hi Aksh, I'm ${formData.name}. ${formData.message}`;
-        const url = `https://wa.me/8709066041?text=${encodeURIComponent(text)}`;
-        window.open(url, '_blank');
-    };
+  const handleWhatsApp = () => {
+    const text = `Hi Aksh, I'm ${formData.name}. ${formData.message}`;
+    const url = `https://wa.me/8709066041?text=${encodeURIComponent(text)}`;
+    window.open(url, '_blank');
+  };
 
-    return (
-        <section id="contact" className="py-24 bg-neon-dark relative overflow-hidden">
-            {/* Background Glow */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-neon-pink opacity-[0.03] rounded-full blur-[120px] pointer-events-none"></div>
+  const info = [
+    {
+      icon: Mail,
+      label: 'Email',
+      value: resumeData.contact.email,
+      color: 'text-fuchsia-300 border-fuchsia-500/30 bg-fuchsia-500/10',
+    },
+    {
+      icon: Phone,
+      label: 'Phone / WhatsApp',
+      value: resumeData.contact.phoneDisplay,
+      color: 'text-emerald-300 border-emerald-500/30 bg-emerald-500/10',
+    },
+  ];
 
-            <div className="container mx-auto px-4 relative z-10">
-                <div className="text-center mb-16">
-                    <h2 className="text-4xl font-bold text-white mb-4 tracking-tighter">GET IN <span className="neon-text-pink">TOUCH</span></h2>
-                    <p className="text-gray-400">Have a project in mind or just want to say hi?</p>
+  return (
+    <section id="contact" className="relative overflow-hidden py-24">
+      <div className="section-mesh" />
+      <div className="pointer-events-none absolute left-1/2 top-1/2 h-[500px] w-[500px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-cyan-500/[0.04] blur-[120px]" />
+
+      <div className="container relative z-10 mx-auto px-4">
+        <SectionHeader
+          eyebrow="Connect"
+          title="Get In"
+          accent="Touch"
+          align="center"
+          subtitle="Have a project in mind or just want to say hi?"
+        />
+
+        <div className="mx-auto grid max-w-6xl gap-10 md:grid-cols-2 md:gap-14">
+          <motion.div
+            initial={{ opacity: 0, x: -30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+          >
+            <h3 className="font-display mb-8 text-2xl font-semibold text-white">
+              Contact Information
+            </h3>
+            <div className="space-y-6">
+              {info.map(({ icon: Icon, label, value, color }) => (
+                <div key={label} className="flex items-start gap-5">
+                  <div className={`rounded-xl border p-3.5 ${color}`}>
+                    <Icon size={22} />
+                  </div>
+                  <div>
+                    <p className="mb-1 font-mono text-xs uppercase tracking-widest text-zinc-500">
+                      {label}
+                    </p>
+                    <p className="font-semibold text-white">{value}</p>
+                  </div>
                 </div>
-
-                <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-16">
-                    {/* Contact Info */}
-                    <motion.div
-                        initial={{ opacity: 0, x: -30 }}
-                        whileInView={{ opacity: 1, x: 0 }}
-                        viewport={{ once: true }}
-                    >
-                        <h3 className="text-2xl font-bold text-white mb-8">Contact Information</h3>
-                        <div className="space-y-8">
-                            <div className="flex items-start gap-6 group">
-                                <div className="p-4 glass rounded-2xl text-neon-pink group-hover:shadow-neon-pink transition-all">
-                                    <Mail size={24} />
-                                </div>
-                                <div>
-                                    <p className="text-gray-500 text-sm uppercase font-mono tracking-widest mb-1">Email</p>
-                                    <p className="grow text-white font-bold">akshkumarlalla@gmail.com</p>
-                                </div>
-                            </div>
-                            <div className="flex items-start gap-6 group">
-                                <div className="p-4 glass rounded-2xl text-neon-green group-hover:shadow-neon-green transition-all">
-                                    <Phone size={24} />
-                                </div>
-                                <div>
-                                    <p className="text-gray-500 text-sm uppercase font-mono tracking-widest mb-1">Phone / WhatsApp</p>
-                                    <p className="text-white font-bold">+91 8709066041</p>
-                                </div>
-                            </div>
-                            <div className="flex items-start gap-6 group">
-                                <div className="p-4 glass rounded-2xl text-neon-cyan group-hover:shadow-neon-cyan transition-all">
-                                    <MapPin size={24} />
-                                </div>
-                                <div>
-                                    <p className="text-gray-500 text-sm uppercase font-mono tracking-widest mb-1">Location</p>
-                                    <p className="text-white font-bold">Newtown, Kolkata</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="mt-12 p-8 glass rounded-3xl border-neon-green/20">
-                            <h4 className="text-lg font-bold text-white mb-4">Direct Action</h4>
-                            <p className="text-gray-400 mb-6 text-sm">Need a faster response? Start a conversation on WhatsApp immediately.</p>
-                            <button 
-                                onClick={handleWhatsApp}
-                                className="w-full py-4 bg-transparent border border-neon-green text-neon-green font-bold rounded-xl hover:bg-neon-green hover:text-black transition-all flex items-center justify-center gap-3 shadow-neon-green/10"
-                            >
-                                <MessageSquare size={20} /> CHAT ON WHATSAPP
-                            </button>
-                        </div>
-                    </motion.div>
-
-                    {/* Contact Form */}
-                    <motion.div
-                        initial={{ opacity: 0, x: 30 }}
-                        whileInView={{ opacity: 1, x: 0 }}
-                        viewport={{ once: true }}
-                        className="glass p-8 md:p-12 rounded-[2rem] border-white/5 shadow-2xl"
-                    >
-                        <form onSubmit={handleSubmit} className="space-y-6">
-                            <div>
-                                <label className="block text-gray-400 text-xs font-mono uppercase tracking-widest mb-2">Your Name</label>
-                                <input 
-                                    type="text" 
-                                    name="name"
-                                    value={formData.name}
-                                    onChange={handleChange}
-                                    required
-                                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-4 text-white focus:outline-none focus:border-neon-pink transition-all"
-                                    placeholder="John Doe"
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-gray-400 text-xs font-mono uppercase tracking-widest mb-2">Email Address</label>
-                                <input 
-                                    type="email" 
-                                    name="email"
-                                    value={formData.email}
-                                    onChange={handleChange}
-                                    required
-                                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-4 text-white focus:outline-none focus:border-neon-pink transition-all"
-                                    placeholder="john@example.com"
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-gray-400 text-xs font-mono uppercase tracking-widest mb-2">Message</label>
-                                <textarea 
-                                    name="message"
-                                    value={formData.message}
-                                    onChange={handleChange}
-                                    required
-                                    rows="4"
-                                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-4 text-white focus:outline-none focus:border-neon-pink transition-all resize-none"
-                                    placeholder="How can I help you?"
-                                ></textarea>
-                            </div>
-
-                            {status.msg && (
-                                <div className={`p-4 rounded-xl text-sm ${status.type === 'success' ? 'bg-neon-green/10 text-neon-green border border-neon-green/20' : 'bg-red-500/10 text-red-500 border border-red-500/20'}`}>
-                                    {status.msg}
-                                </div>
-                            )}
-
-                            <button 
-                                type="submit" 
-                                disabled={loading}
-                                className="w-full py-4 bg-neon-pink text-black font-extrabold rounded-xl hover:shadow-neon-pink transition-all flex items-center justify-center gap-2 disabled:opacity-50"
-                            >
-                                {loading ? 'SENDING...' : 'SEND MESSAGE'} <Send size={20} />
-                            </button>
-                        </form>
-                    </motion.div>
-                </div>
+              ))}
             </div>
-        </section>
-    );
+
+            <TiltCard max={5} className="mt-10">
+              <div className="depth-card p-7">
+                <h4 className="mb-3 font-display text-lg font-semibold text-white">Direct Action</h4>
+                <p className="mb-5 text-sm text-zinc-400">
+                  Need a faster response? Start a conversation on WhatsApp immediately.
+                </p>
+                <button
+                  onClick={handleWhatsApp}
+                  className="flex w-full items-center justify-center gap-3 rounded-lg border border-emerald-400/60 bg-emerald-400/10 py-3.5 font-semibold text-emerald-300 transition-all hover:-translate-y-0.5 hover:bg-emerald-400 hover:text-zinc-950 hover:shadow-[0_12px_40px_rgba(57,255,20,0.25)]"
+                >
+                  <MessageSquare size={20} /> Chat on WhatsApp
+                </button>
+              </div>
+            </TiltCard>
+          </motion.div>
+
+          <TiltCard max={5}>
+            <motion.div
+              initial={{ opacity: 0, x: 30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              className="depth-card p-8 md:p-10"
+            >
+              <form onSubmit={handleSubmit} className="space-y-5">
+                <div>
+                  <label className="mb-2 block font-mono text-xs uppercase tracking-widest text-zinc-400">
+                    Your Name
+                  </label>
+                  <input
+                    type="text"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleChange}
+                    required
+                    className="input-3d"
+                    placeholder="John Doe"
+                  />
+                </div>
+                <div>
+                  <label className="mb-2 block font-mono text-xs uppercase tracking-widest text-zinc-400">
+                    Email Address
+                  </label>
+                  <input
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    required
+                    className="input-3d"
+                    placeholder="john@example.com"
+                  />
+                </div>
+                <div>
+                  <label className="mb-2 block font-mono text-xs uppercase tracking-widest text-zinc-400">
+                    Message
+                  </label>
+                  <textarea
+                    name="message"
+                    value={formData.message}
+                    onChange={handleChange}
+                    required
+                    rows="4"
+                    className="input-3d resize-none"
+                    placeholder="How can I help you?"
+                  />
+                </div>
+
+                {status.msg && (
+                  <div
+                    className={`rounded-lg p-4 text-sm ${
+                      status.type === 'success'
+                        ? 'border border-emerald-400/20 bg-emerald-400/10 text-emerald-300'
+                        : 'border border-red-500/20 bg-red-500/10 text-red-400'
+                    }`}
+                  >
+                    {status.msg}
+                  </div>
+                )}
+
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="flex w-full items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-cyan-400 to-emerald-400 py-3.5 font-bold text-zinc-950 shadow-[0_12px_40px_rgba(0,243,255,0.2)] transition-all hover:-translate-y-0.5 hover:shadow-[0_16px_48px_rgba(0,243,255,0.35)] disabled:opacity-50"
+                >
+                  {loading ? 'Sending...' : 'Send Message'} <Send size={18} />
+                </button>
+              </form>
+            </motion.div>
+          </TiltCard>
+        </div>
+      </div>
+    </section>
+  );
 };
 
 export default Contact;
