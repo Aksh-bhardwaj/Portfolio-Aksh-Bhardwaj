@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { X, Calendar, Clock, ArrowLeft, ThumbsUp, ThumbsDown, MessageSquare, Send, Highlighter } from 'lucide-react';
+import { X, Calendar, Clock, ArrowLeft, ThumbsUp, ThumbsDown, MessageSquare, Send, Highlighter, Link2, Check } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import api from '../utils/api';
@@ -12,11 +12,18 @@ const BlogDetail = ({ post, onClose }) => {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [highlightMode, setHighlightMode] = useState(false);
     const [userVote, setUserVote] = useState(null);
+    const [copied, setCopied] = useState(false);
+
+    useEffect(() => {
+        setCurrentPost(post);
+    }, [post]);
 
     useEffect(() => {
         const votes = JSON.parse(localStorage.getItem('aksh_portfolio_votes') || '{}');
         if (votes[post.slug]) {
             setUserVote(votes[post.slug]);
+        } else {
+            setUserVote(null);
         }
 
         const local = getLocalPostBySlug(post.slug);
@@ -86,6 +93,18 @@ const BlogDetail = ({ post, onClose }) => {
         }
     };
 
+    const handleCopyLink = async () => {
+        const url = `${window.location.origin}/blog/${currentPost.slug}`;
+        try {
+            await navigator.clipboard.writeText(url);
+            setCopied(true);
+            setTimeout(() => setCopied(false), 2000);
+        } catch {
+            // fallback
+            window.prompt('Copy link:', url);
+        }
+    };
+
     if (!currentPost) return null;
 
     return (
@@ -108,7 +127,19 @@ const BlogDetail = ({ post, onClose }) => {
                     <ArrowLeft size={18} /> BACK
                 </button>
                 
-                <div className="flex items-center gap-8">
+                <div className="flex items-center gap-3 sm:gap-6">
+                    <button
+                        type="button"
+                        onClick={handleCopyLink}
+                        className={`flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-bold transition-all ${
+                            copied
+                                ? 'bg-emerald-400/20 text-emerald-300'
+                                : 'border border-white/10 bg-white/5 text-gray-400 hover:text-cyan-300'
+                        }`}
+                    >
+                        {copied ? <Check size={14} /> : <Link2 size={14} />}
+                        {copied ? 'COPIED' : 'SHARE'}
+                    </button>
                     <button 
                         onClick={() => setHighlightMode(!highlightMode)}
                         className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold transition-all ${highlightMode ? 'bg-yellow-400 text-black shadow-[0_0_15px_rgba(250,204,21,0.5)]' : 'bg-white/5 text-gray-400 border border-white/10'}`}

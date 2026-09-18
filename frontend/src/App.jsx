@@ -4,14 +4,15 @@ import PortfolioSite from './components/PortfolioSite';
 import AdminBlog from './components/AdminBlog';
 
 function App() {
-    return (
-        <BrowserRouter>
-            <Routes>
-                <Route path="/studio" element={<AdminBlog />} />
-                <Route path="/*" element={<PortfolioSite />} />
-            </Routes>
-        </BrowserRouter>
-    );
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/studio" element={<AdminBlog />} />
+        <Route path="/blog/:slug" element={<PortfolioSite />} />
+        <Route path="/*" element={<PortfolioSite />} />
+      </Routes>
+    </BrowserRouter>
+  );
 }
 
 export default App;
