@@ -1,83 +1,196 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { TypeAnimation } from 'react-type-animation';
-import { Github, Linkedin, Twitter, ArrowRight } from 'lucide-react';
+import { Github, Linkedin, ArrowRight } from 'lucide-react';
+
+const fadeUp = {
+  hidden: { opacity: 0, y: 28 },
+  show: (i = 0) => ({
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.7, delay: 0.12 * i, ease: [0.22, 1, 0.36, 1] },
+  }),
+};
 
 const Hero = () => {
   return (
-    <section className="relative h-screen flex items-center justify-center overflow-hidden pt-20">
-      {/* Animated background elements */}
-      <div className="absolute top-1/4 -left-10 w-72 h-72 bg-neon-cyan opacity-10 rounded-full blur-[100px] animate-pulse"></div>
-      <div className="absolute bottom-1/4 -right-10 w-80 h-80 bg-neon-green opacity-10 rounded-full blur-[100px] animate-pulse delay-700"></div>
-
-      <div className="container mx-auto px-4 z-10 grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-8 items-center">
+    <section className="relative min-h-screen flex items-center overflow-hidden pt-24 pb-16 md:pb-0">
+      {/* Atmosphere */}
+      <div className="pointer-events-none absolute inset-0" aria-hidden>
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_15%_40%,rgba(0,200,180,0.12),transparent_55%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_50%_at_85%_55%,rgba(56,189,248,0.1),transparent_50%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_50%_40%_at_50%_100%,rgba(57,255,20,0.06),transparent_60%)]" />
+        <div
+          className="absolute inset-0 opacity-[0.35]"
+          style={{
+            backgroundImage:
+              'linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px)',
+            backgroundSize: '64px 64px',
+            maskImage: 'radial-gradient(ellipse 70% 60% at 50% 45%, black 20%, transparent 75%)',
+          }}
+        />
         <motion.div
-          initial={{ opacity: 0, x: -50 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.8 }}
-        >
-          <h2 className="text-neon-green font-mono mb-4 text-xl tracking-widest uppercase">Hi, my name is</h2>
-          <h1 className="text-6xl md:text-8xl font-bold mb-6 text-white tracking-tight leading-none bg-clip-text text-transparent bg-gradient-to-r from-white via-neon-cyan to-neon-pink">
-            Aksh Bhardwaj
-          </h1>
-          <div className="text-2xl md:text-3xl text-gray-400 mb-8 h-12">
-            <span className="mr-3">I am a</span>
+          className="absolute top-[18%] left-[8%] h-px w-40 bg-gradient-to-r from-transparent via-neon-cyan/50 to-transparent"
+          initial={{ scaleX: 0, opacity: 0 }}
+          animate={{ scaleX: 1, opacity: 1 }}
+          transition={{ duration: 1.2, delay: 0.4 }}
+        />
+        <motion.div
+          className="absolute bottom-[22%] right-[12%] h-px w-32 bg-gradient-to-r from-transparent via-neon-green/40 to-transparent"
+          initial={{ scaleX: 0, opacity: 0 }}
+          animate={{ scaleX: 1, opacity: 1 }}
+          transition={{ duration: 1.2, delay: 0.7 }}
+        />
+      </div>
+
+      <div className="container relative z-10 mx-auto grid max-w-7xl grid-cols-1 items-center gap-12 px-6 md:grid-cols-12 md:gap-8 lg:px-8">
+        <div className="md:col-span-7 lg:col-span-7">
+          <motion.p
+            custom={0}
+            variants={fadeUp}
+            initial="hidden"
+            animate="show"
+            className="mb-5 font-mono text-sm tracking-[0.28em] text-emerald-400/90 uppercase"
+          >
+            Hi, my name is
+          </motion.p>
+
+          <motion.h1
+            custom={1}
+            variants={fadeUp}
+            initial="hidden"
+            animate="show"
+            className="font-display mb-5 text-5xl font-semibold leading-[0.95] tracking-tight text-white sm:text-6xl md:text-7xl lg:text-[5.5rem]"
+          >
+            Aksh{' '}
+            <span className="bg-gradient-to-br from-white via-white to-cyan-300/80 bg-clip-text text-transparent">
+              Bhardwaj
+            </span>
+          </motion.h1>
+
+          <motion.div
+            custom={2}
+            variants={fadeUp}
+            initial="hidden"
+            animate="show"
+            className="mb-7 flex min-h-[2.5rem] flex-wrap items-baseline gap-x-3 text-xl text-zinc-400 sm:text-2xl md:text-[1.65rem]"
+          >
+            <span>I build as a</span>
             <TypeAnimation
               sequence={[
                 'Software Developer',
-                2000,
+                2200,
                 'Django Specialist',
-                2000,
+                2200,
                 'React Developer',
-                2000,
+                2200,
                 'API Security Enthusiast',
-                2000,
+                2200,
               ]}
               wrapper="span"
               speed={50}
               repeat={Infinity}
-              className="neon-text-cyan font-bold"
+              className="font-display font-medium text-cyan-300"
+              cursor={true}
             />
-          </div>
-          <p className="text-gray-400 max-w-lg mb-10 text-lg leading-relaxed">
-            I build robust, secure, and modern web applications with a focus on high-performance backends and interactive frontends.
-          </p>
-          <div className="flex flex-wrap gap-6">
+          </motion.div>
+
+          <motion.p
+            custom={3}
+            variants={fadeUp}
+            initial="hidden"
+            animate="show"
+            className="mb-10 max-w-md text-base leading-relaxed text-zinc-400 sm:text-lg"
+          >
+            Robust, secure web apps — high-performance backends paired with
+            interactive frontends.
+          </motion.p>
+
+          <motion.div
+            custom={4}
+            variants={fadeUp}
+            initial="hidden"
+            animate="show"
+            className="flex flex-wrap items-center gap-4"
+          >
             <motion.a
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                href="#contact"
-                className="px-8 py-4 bg-transparent neon-button-green text-lg font-bold flex items-center gap-2 group"
+              whileHover={{ y: -2 }}
+              whileTap={{ scale: 0.98 }}
+              href="#contact"
+              className="hero-cta group inline-flex items-center gap-2 rounded-md bg-emerald-400 px-7 py-3.5 text-base font-semibold text-zinc-950 transition-shadow hover:shadow-[0_0_32px_rgba(57,255,20,0.35)]"
             >
-                Get In Touch <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
+              Get In Touch
+              <ArrowRight
+                size={18}
+                className="transition-transform group-hover:translate-x-1"
+              />
             </motion.a>
-            <div className="flex items-center gap-6 ml-4">
-              <a href="https://github.com/Aksh-Bhardwaj" target="_blank" className="text-gray-400 hover:neon-text-cyan transition-all transform hover:scale-110">
-                <Github size={28} />
+
+            <div className="flex items-center gap-2">
+              <a
+                href="https://github.com/Aksh-Bhardwaj"
+                target="_blank"
+                rel="noreferrer"
+                aria-label="GitHub"
+                className="flex h-11 w-11 items-center justify-center rounded-md border border-white/10 text-zinc-400 transition-colors hover:border-cyan-400/40 hover:text-cyan-300"
+              >
+                <Github size={20} />
               </a>
-              <a href="https://linkedin.com/in/aksh-bhardwaj-6125a81b4" target="_blank" className="text-gray-400 hover:neon-text-pink transition-all transform hover:scale-110">
-                <Linkedin size={28} />
+              <a
+                href="https://linkedin.com/in/aksh-bhardwaj-6125a81b4"
+                target="_blank"
+                rel="noreferrer"
+                aria-label="LinkedIn"
+                className="flex h-11 w-11 items-center justify-center rounded-md border border-white/10 text-zinc-400 transition-colors hover:border-cyan-400/40 hover:text-cyan-300"
+              >
+                <Linkedin size={20} />
               </a>
             </div>
-          </div>
-        </motion.div>
+          </motion.div>
+        </div>
 
         <motion.div
-           initial={{ opacity: 0, scale: 0.8 }}
-           animate={{ opacity: 1, scale: 1 }}
-           transition={{ duration: 1, ease: "easeOut" }}
-           className="flex justify-center"
+          initial={{ opacity: 0, x: 40 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.9, delay: 0.25, ease: [0.22, 1, 0.36, 1] }}
+          className="relative flex justify-center md:col-span-5 lg:col-span-5"
         >
-          <div className="relative group">
-            <div className="absolute -inset-1 bg-gradient-to-r from-neon-cyan via-neon-green to-neon-pink rounded-2xl blur opacity-25 group-hover:opacity-75 transition duration-1000 group-hover:duration-200"></div>
-            <div className="relative glass p-3 sm:p-4 rounded-2xl">
-               <img 
-                 src="/images/profile.png" 
-                 alt="Aksh Bhardwaj" 
-                 className="w-56 h-56 sm:w-72 sm:h-72 md:w-[350px] md:h-[350px] object-cover rounded-xl mx-auto"
-               />
-               <div className="absolute top-10 right-10 w-4 h-4 bg-neon-green rounded-full shadow-neon-green"></div>
-            </div>
+          <div className="relative w-full max-w-[320px] sm:max-w-[360px] md:max-w-none">
+            {/* Soft ambient light — not a harsh ring */}
+            <div
+              className="pointer-events-none absolute -inset-8 rounded-full bg-[radial-gradient(circle,rgba(0,243,255,0.18)_0%,transparent_65%)] blur-2xl"
+              aria-hidden
+            />
+            <div
+              className="pointer-events-none absolute -bottom-6 left-1/2 h-24 w-3/4 -translate-x-1/2 rounded-full bg-emerald-400/10 blur-3xl"
+              aria-hidden
+            />
+
+            <motion.div
+              animate={{ y: [0, -8, 0] }}
+              transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
+              className="relative"
+            >
+              <div className="hero-frame overflow-hidden rounded-2xl">
+                <div className="relative overflow-hidden rounded-[0.9rem] bg-zinc-950">
+                  <img
+                    src="/images/profile.png"
+                    alt="Aksh Bhardwaj"
+                    className="aspect-square w-full object-cover object-top"
+                  />
+                  <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-zinc-950/50 via-transparent to-transparent" />
+                  <div className="absolute right-4 top-4 flex items-center gap-2 rounded-md border border-white/10 bg-zinc-950/70 px-2.5 py-1 backdrop-blur-md">
+                    <span className="relative flex h-2 w-2">
+                      <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-60" />
+                      <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-400" />
+                    </span>
+                    <span className="font-mono text-[10px] tracking-wider text-zinc-300 uppercase">
+                      Available
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
           </div>
         </motion.div>
       </div>

@@ -23,11 +23,11 @@ const Navbar = () => {
   ];
 
   return (
-    <nav className={`fixed w-full z-50 transition-all duration-300 ${isScrolled ? 'glass py-4 shadow-neon-cyan' : 'bg-transparent py-6'}`}>
+    <nav className={`fixed w-full z-50 transition-all duration-300 ${isScrolled ? 'glass py-4' : 'bg-transparent py-6'}`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center">
           <div className="flex-shrink-0 cursor-pointer">
-            <span className="text-2xl font-bold neon-text-cyan tracking-tighter">AB.</span>
+            <span className="font-display text-2xl font-bold tracking-tight text-cyan-300">AB.</span>
           </div>
           
           <div className="hidden md:block">
@@ -36,7 +36,7 @@ const Navbar = () => {
                 <a
                   key={link.name}
                   href={link.href}
-                  className="text-gray-300 hover:neon-text-green transition-colors font-medium"
+                  className="text-sm font-medium tracking-wide text-zinc-400 transition-colors hover:text-white"
                 >
                   {link.name}
                 </a>
